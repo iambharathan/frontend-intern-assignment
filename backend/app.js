@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 // Import routes
@@ -29,20 +28,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
-});
-
-// Ensure MongoDB connection before handling requests
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    res.status(503).json({
-      success: false,
-      message: 'Database connection unavailable',
-    });
-  }
 });
 
 // Health check route
