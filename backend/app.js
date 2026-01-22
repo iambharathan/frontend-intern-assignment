@@ -34,6 +34,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Root route for Render
+app.get('/', (req, res) => {
+  res.send('Backend is running');
+});
+
 // Health check route
 app.get('/health', (req, res) => {
   res.status(200).json({

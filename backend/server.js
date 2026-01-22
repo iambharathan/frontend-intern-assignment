@@ -5,17 +5,18 @@ const connectDB = require('./config/db');
 // Connect to MongoDB
 connectDB();
 
-// Start server (works for both development and Render)
+// Get PORT from environment (Render provides this)
 const PORT = process.env.PORT || 5000;
+
+if (!process.env.PORT && process.env.NODE_ENV === 'production') {
+  console.error("❌ PORT environment variable not defined");
+}
+
+// Start server - MUST bind to 0.0.0.0 for Render
 const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`
-╔════════════════════════════════════════╗
-║   🚀 Server is running!                ║
-║   📍 Port: ${PORT}                       ║
-║   🌍 Environment: ${process.env.NODE_ENV || 'development'}        ║
-║   📡 API: http://localhost:${PORT}/api   ║
-╚════════════════════════════════════════╝
-  `);
+  console.log(`🚀 Server listening on port ${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📡 API: http://localhost:${PORT}/api`);
 });
 
 // Handle unhandled promise rejections
