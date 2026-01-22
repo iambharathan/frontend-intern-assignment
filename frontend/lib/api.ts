@@ -1,11 +1,19 @@
 import axios from 'axios';
 
+// Base backend URL (without /api)
+const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+
+// Always append /api to ensure consistency
+const apiUrl = `${backendUrl}/api`;
+console.log('🔗 API Base URL:', apiUrl);
+
 // Create axios instance
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api',
+  baseURL: apiUrl,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // Request interceptor - Add JWT token to requests
