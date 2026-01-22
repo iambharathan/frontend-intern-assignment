@@ -16,9 +16,12 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'https://taskflow-7g1eoj2cc-bharathans-projects-30f45a85.vercel.app',
+    'https://taskflow-i5jpxlmf4-bharathans-projects-30f45a85.vercel.app',
     /\.vercel\.app$/
   ],
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use(express.json());
