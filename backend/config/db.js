@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// Global cache for serverless environments
+// Global cache for connection
 let cached = global.mongoose;
 
 if (!cached) {
@@ -8,8 +8,7 @@ if (!cached) {
 }
 
 /**
- * Connect to MongoDB Database with global caching for serverless
- * Prevents buffering timeouts on Vercel
+ * Connect to MongoDB Database with global caching
  */
 const connectDB = async () => {
   // Return cached connection if available
@@ -20,20 +19,29 @@ const connectDB = async () => {
 
   // If no promise exists, create a new connection
   if (!cached.promise) {
+    if (!process.env.MONGODB_URI) {
+      throw new Error('MONGODB_URI environment variable is not defined');
+    }
+
     const opts = {
-      bufferCommands: false, // Disable buffering to prevent timeouts
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 10000, // Increase timeout
+      family: 4, // Use IPv4, skip trying IPv6
     };
 
-    console.log('🔄 Creating new MongoDB connection...');
+    console.log('🔄 Connecting to MongoDB...');
+    console.log('📍 URI:', process.env.MONGODB_URI.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')); // Hide credentials in logs
+    
     cached.promise = mongoose
       .connect(process.env.MONGODB_URI, opts)
       .then((mongoose) => {
         console.log(`✅ MongoDB Connected: ${mongoose.connection.host}`);
-        console.log(`📊 Database Name: ${mongoose.connection.name}`);
+        console.log(`📊 Database: ${mongoose.connection.name}`);
         return mongoose;
       })
       .catch((error) => {
-        console.error(`❌ Error connecting to MongoDB: ${error.message}`);
+        console.error(`❌ MongoDB Connection Error: ${error.message}`);
+        console.error(`🔍 Error Code: ${error.code || 'UNKNOWN'}`);
         cached.promise = null; // Reset promise on error
         throw error;
       });
