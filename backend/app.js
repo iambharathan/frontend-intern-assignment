@@ -11,13 +11,14 @@ const taskRoutes = require('./routes/taskRoutes');
 // Initialize express app
 const app = express();
 
-// CORS configuration for Vercel
+// CORS configuration
 app.use(cors({
   origin: [
     'http://localhost:3000',
     'https://taskflow-7g1eoj2cc-bharathans-projects-30f45a85.vercel.app',
     'https://taskflow-i5jpxlmf4-bharathans-projects-30f45a85.vercel.app',
-    /\.vercel\.app$/
+    /\.vercel\.app$/,
+    /\.onrender\.com$/
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
