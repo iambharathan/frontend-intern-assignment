@@ -12,9 +12,6 @@ const taskRoutes = require('./routes/taskRoutes');
 // Initialize express app
 const app = express();
 
-// Connect to MongoDB (async, will be cached in serverless)
-connectDB();
-
 // CORS configuration for Vercel
 app.use(cors({
   origin: [
@@ -32,6 +29,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
+});
+
+// Ensure MongoDB connection before handling requests
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    res.status(503).json({
+      success: false,
+      message: 'Database connection unavailable',
+    });
+  }
 });
 
 // Health check route
